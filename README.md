@@ -22,7 +22,7 @@ With this script, users can quickly get started with containerization without ne
 You can run the script directly from your terminal using the following one-liner:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/balzabu/.../.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Balzabu/Kalidock-Automator/main/kalidock_automator.sh)"
 ```
 
 ### Note
