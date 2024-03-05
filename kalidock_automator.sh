@@ -59,19 +59,40 @@ done
 # Install required dependencies
 # ==================================================================
 echo -e "${YELLOW}Installing required dependencies...${ENDCOLOR}"
-if ! sudo apt-get update && sudo apt-get install -y ca-certificates curl; then
+
+# Update package lists and install dependencies
+if ! sudo apt-get update; then
+    echo -e "${RED}Failed to update package lists. Exiting.${ENDCOLOR}"
+    exit 1
+fi
+
+if ! sudo apt-get install -y ca-certificates curl; then
     echo -e "${RED}Failed to install required dependencies. Exiting.${ENDCOLOR}"
     exit 1
 fi
+
+echo -e "${GREEN}Required dependencies installed successfully.${ENDCOLOR}"
 
 # ==================================================================
 # Add Docker's official GPG key
 # ==================================================================
 echo -e "${YELLOW}Adding Docker's official GPG key...${ENDCOLOR}"
-if ! sudo install -m 0755 -d /etc/apt/keyrings && \
-   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
-   sudo chmod a+r /etc/apt/keyrings/docker.asc; then
-    echo -e "${RED}Failed to add Docker's official GPG key. Exiting.${ENDCOLOR}"
+
+# Create the directory for keyrings
+if ! sudo install -m 0755 -d /etc/apt/keyrings; then
+    echo -e "${RED}Failed to create the directory for Docker's GPG key. Exiting.${ENDCOLOR}"
+    exit 1
+fi
+
+# Download Docker's GPG key
+if ! sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc; then
+    echo -e "${RED}Failed to download Docker's GPG key. Exiting.${ENDCOLOR}"
+    exit 1
+fi
+
+# Set appropriate permissions for the key file
+if ! sudo chmod a+r /etc/apt/keyrings/docker.asc; then
+    echo -e "${RED}Failed to set permissions for Docker's GPG key file. Exiting.${ENDCOLOR}"
     exit 1
 fi
 
@@ -93,6 +114,19 @@ fi
 # ==================================================================
 echo -e "${YELLOW}Updating Apt sources...${ENDCOLOR}"
 sudo apt-get update
+
+# ==================================================================
+# Install Docker
+# ==================================================================
+echo -e "${YELLOW}Installing Docker...${ENDCOLOR}"
+
+# Install Docker CE, Docker CE CLI, containerd.io, Docker Buildx plugin, and Docker Compose plugin
+if ! sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
+    echo -e "${RED}Failed to install Docker and its components. Exiting.${ENDCOLOR}"
+    exit 1
+fi
+
+echo -e "${GREEN}Docker installed successfully.${ENDCOLOR}"
 
 # ==================================================================
 # Install Portainer CE
